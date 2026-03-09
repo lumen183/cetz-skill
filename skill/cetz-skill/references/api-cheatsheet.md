@@ -29,16 +29,35 @@
 
 ---
 
-## 3. 坐标系统 (Coordinate Systems)
+## 3. 坐标系统与锚点 (Coordinates & Anchors)
 
-- **绝对坐标:** `(x, y)` 或 `(x, y, z)`
-- **相对坐标:** `(rel: (1, 0))` (相对于上一个位置)
+- **绝对坐标:** `(x, y)` 或 `(x, y, z)` - 如 `(0, 0)`
+- **相对坐标:**
+    - `(rel: (dx, dy))` - 相对于上一个点移动。
+    - `(rel: (dx, dy), to: (px, py))` - 相对于指定点 `to` 移动。
 - **极坐标:** `(angle: 45deg, radius: 2)`
-- **锚点引用:** `("name.anchor")`。必须先给元素命名：`draw.rect((0,0), (1,1), name: "r")`，然后引用 `("r.end")`。
+- **锚点引用 (Named Elements):**
+    - 首先定义名称: `draw.rect((0,0), (2,2), name: "box")`
+    - 引用锚点: `"box.top"`, `"box.bottom-right"`, `"box.center"`
+    - 常见锚点: `.north`, `.south`, `.east`, `.west`, `.center`, `.top-left` 等。
+
+## 4. 样式指南 (Styling Guide)
+
+所有绘图函数均接受以下样式参数：
+
+| 属性 | 语法示例 | 说明 |
+| :--- | :--- | :--- |
+| **Stroke** | `stroke: 1pt` | 线宽 |
+| | `stroke: red` | 颜色 |
+| | `stroke: (paint: blue, dash: "dashed")` | 虚线 ("dashed", "dotted") |
+| **Fill** | `fill: red` | 填充色 |
+| | `fill: blue.lighten(50%)` | 半透明填充 |
+| **Mark** | `mark: (end: ">")` | 箭头 |
+| | `mark: (start: "o", end: "stealth")` | 双向标记 |
 
 ---
 
-## 4. 常见 AI 错误与坑 (Pitfalls & Warnings)
+## 5. 常见 AI 错误与坑 (Pitfalls & Warnings)
 
 ### ⚠️ Mark 语法
 **错误:** `mark: ">"` 或 `mark: "stealth"`
@@ -103,9 +122,7 @@ content(...)
 
 ---
 
----
-
-## 5. 常用标记类型表 (Mark Types)
+## 6. 常用标记类型表 (Mark Types)
 
 | 名称 | 预览描述 |
 | :--- | :--- |
@@ -117,7 +134,7 @@ content(...)
 
 ---
 
-## 6. CeTZ-Plot 入门 (Plotting)
+## 7. CeTZ-Plot 入门 (Plotting)
 
 绘图需要使用 `plot.plot` 环境。
 
@@ -136,16 +153,42 @@ content(...)
 
 ---
 
-## 7. 布局与变换 (Layout & Transformations)
+## 8. 布局与变换 (Layout & Groups)
 
-- **平移:** `draw.set-origin((x, y))`
-- **缩放:** `draw.scale(1.5)`
-- **旋转:** `draw.rotate(45deg)`
-- **组:** `draw.group({ ... })` 用于局部坐标系。
+使用 `draw.group` 封装局部坐标系，方便模块化绘图。
+
+```typst
+draw.group({
+  draw.scale(0.5)           // 仅影响组内
+  draw.rotate(30deg)        // 仅影响组内
+  draw.translate((2, 0))    // 移动组的原点
+  
+  // 在局部坐标系绘图
+  draw.rect((-1, -1), (1, 1), stroke: blue)
+})
+```
 
 ---
 
-## 8. 数学函数库 (simple-plot)
+## 9. 连线技巧 (Connecting Nodes)
+
+绘制流程图时，利用锚点自动连接最方便。
+
+```typst
+// 1. 定义节点
+draw.content((0, 0), [Start], name: "start")
+draw.content((0, -2), [Process], name: "proc")
+
+// 2. 自动连接边缘
+draw.line("start.south", "proc.north", mark: (end: ">"))
+
+// 3. 复杂路径连接
+draw.line("start.east", (rel: (1,0)), "proc.east", mark: (end: ">"))
+```
+
+---
+
+## 10. 数学函数库 (simple-plot)
 
 基于 CeTZ 0.4.2 开发，简化了数学函数的绘制流程。
 

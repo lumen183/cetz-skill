@@ -7,6 +7,38 @@ description: High-quality scientific diagramming for Typst using CeTZ 0.4.2
 
 CeTZ (CeTZ, ein Typst Zeichenpaket) is a powerful library for drawing with [Typst](https://typst.app). This skill focuses on high-quality scientific diagramming using CeTZ 0.4.2.
 
+
+## 工作流程 (Workflow)
+
+为了确保生成高质量的图表，请遵循以下步骤：
+
+1.  **分析与规划 (Analyze & Plan)**
+    *   理解用户需求：是流程图、科学示意图、电路图还是数据图表？
+    *   规划布局：确定核心元素的相对位置（如 "Process A 在 (0,0)，Process B 在 (2,0)"）。
+    *   选择模板：参考 "案例目录" 中最接近的示例代码。
+
+2.  **编写与生成 (Draft Code)**
+    *   使用 `cetz` 0.4.2 语法编写 `.typ` 文件。
+    *   **关键**：优先使用 `import "@preview/cetz:0.4.2": canvas, draw` 导入方式以确保稳定性。
+    *   对于复杂图形，先画骨架（nodes），再画连接（edges）。
+
+3.  **编译与验证 (Compile & Verify)**
+    *   运行 Typst 编译命令（如 `typst compile main.typ`）。
+    *   检查输出：
+        *   ❌ **编译错误**：检查是否混用了不兼容的语法（参考 "常见错误"）。
+        *   ❌ **布局错乱**：检查坐标计算或 anchor 使用是否正确。
+        *   ✅ **成功**：进入下一步。
+
+4.  **优化与迭代 (Refine)**
+    *   **样式调整**：调整颜色、线条粗细、字体大小以符合科学出版标准。
+    *   **自我修正**：如果发现元素重叠，调整坐标间距。
+
+5.  **最终交付 (Finalize)**
+    *   输出最终的 `.typ` 代码块。
+    *   确保代码可直接复制运行，不包含未定义的变量。
+
+
+
 ## 快速入门 (Quick Start)
 
 To use CeTZ in a Typst document, import the library and use the `canvas` function:
@@ -27,6 +59,33 @@ To use CeTZ in a Typst document, import the library and use the `canvas` functio
   content((1, 0.5), [Hello CeTZ!])
 })
 ```
+
+## 工作流程 (Workflow - CRITICAL!)
+
+遵循此流程可大幅提高一次性生成的成功率：
+
+1.  **分析与规划 (Analyze & Plan)**
+    *   **布局**: 确定是层级结构（自上而下）、中心辐射还是网格布局。
+    *   **坐标系**: 对于复杂图，先在草稿纸（或脑海中）建立 $(0,0)$ 原点。
+    *   **组件化**: 将重复的结构（如神经元节点）定义为 Typst 函数。
+
+2.  **编写骨架 (Draft Structure)**
+    *   先画节点 (Nodes)，暂时忽略连线。
+    *   使用 `draw.content` 或 `draw.rect` 放置核心元素。
+    *   *Tip*: 给每个关键元素设置 `name: "id"`，方便后续引用。
+
+3.  **连接与修饰 (Connect & Style)**
+    *   使用锚点连接节点：`draw.line("nodeA.east", "nodeB.west")`。
+    *   添加标记 (Marks)：箭头、刻度。
+    *   应用样式：统一颜色、线宽。
+
+4.  **编译与验证 (Compile & Verify)**
+    *   检查是否有重叠。
+    *   检查箭头方向是否正确。
+
+5.  **优化 (Refine)**
+    *   调整 `canvas(length: ...)` 缩放整体大小。
+    *   微调坐标以获得完美的对齐。
 
 ## 正确语法速查 (CRITICAL!)
 
